@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -9,16 +13,66 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="HiraganaTranslation" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="epY-vv-Oe8">
+                                <rect key="frame" x="20" y="428" width="374" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="SHO-Av-mz6"/>
+                                </constraints>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SN2-A9-V7I">
+                                <rect key="frame" x="145.5" y="475" width="123" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="ひらがな変換"/>
+                                <connections>
+                                    <action selector="convert" destination="BYZ-38-t0r" eventType="touchUpInside" id="PG1-FM-Syl"/>
+                                </connections>
+                            </button>
+                            <view hidden="YES" alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lhe-kK-IuF">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                                <subviews>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="grm-d3-sUK">
+                                        <rect key="frame" x="188.5" y="429.5" width="37" height="37"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="grm-d3-sUK" firstAttribute="centerY" secondItem="lhe-kK-IuF" secondAttribute="centerY" id="3M9-3h-1hN"/>
+                                    <constraint firstItem="grm-d3-sUK" firstAttribute="centerX" secondItem="lhe-kK-IuF" secondAttribute="centerX" id="pkp-rl-kIX"/>
+                                </constraints>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="SN2-A9-V7I" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="0Zl-gS-INB"/>
+                            <constraint firstItem="epY-vv-Oe8" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="Fbt-3F-kxJ"/>
+                            <constraint firstItem="lhe-kK-IuF" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="PeV-72-3Dy"/>
+                            <constraint firstAttribute="bottom" secondItem="lhe-kK-IuF" secondAttribute="bottom" id="TOJ-Va-z97"/>
+                            <constraint firstItem="lhe-kK-IuF" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="WHq-S6-SiU"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="epY-vv-Oe8" secondAttribute="trailing" constant="20" id="bgG-zC-6U8"/>
+                            <constraint firstItem="epY-vv-Oe8" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="cwj-Jw-zal"/>
+                            <constraint firstItem="SN2-A9-V7I" firstAttribute="top" secondItem="epY-vv-Oe8" secondAttribute="bottom" constant="7" id="jnk-hx-6km"/>
+                            <constraint firstItem="epY-vv-Oe8" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="ml3-ML-Bdj"/>
+                            <constraint firstItem="lhe-kK-IuF" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="ojI-HE-asO"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="indicator" destination="grm-d3-sUK" id="uTi-hw-nrZ"/>
+                        <outlet property="inputField" destination="epY-vv-Oe8" id="AAu-17-qfS"/>
+                        <outlet property="waitingScreenView" destination="lhe-kK-IuF" id="lqS-wc-iNV"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="131.8840579710145" y="112.5"/>
         </scene>
     </scenes>
 </document>
