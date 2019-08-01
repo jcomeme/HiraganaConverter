@@ -10,6 +10,8 @@ import UIKit
 
 class ViewController: UIViewController, HiraganaConverterDelegate{
     
+    //キーボード表示と非表示の処理を追記する
+    
     @IBOutlet var inputField:UITextField!
     @IBOutlet var waitingScreenView:UIView!
     @IBOutlet var indicator:UIActivityIndicatorView!

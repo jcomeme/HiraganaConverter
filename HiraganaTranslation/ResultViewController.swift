@@ -22,7 +22,6 @@ class ResultViewController: UIViewController {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-        print(originalSentence)
         self.originalSentenceLabel.text = self.originalSentence ?? ""
         self.hiraganaResultLabel.text = self.hiraganaResult ?? ""
         
@@ -30,6 +29,7 @@ class ResultViewController: UIViewController {
     
 
     @IBAction func backToInput(){
+        self.delegate?.inputField.text = ""
         self.dismiss(animated: true, completion: nil)
     }
     /*
