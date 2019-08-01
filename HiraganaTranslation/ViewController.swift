@@ -13,6 +13,9 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     @IBOutlet var inputField:UITextField!
     @IBOutlet var waitingScreenView:UIView!
     @IBOutlet var indicator:UIActivityIndicatorView!
+    
+    var originalSentence:String?
+    var hiraganaResult:String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,7 +23,8 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     }
     
     @IBAction func convert(){
-        if let str = inputField.text{
+        if let str = inputField.text, str.count > 0{
+            self.originalSentence = str
             let converter = HiraganaConverter(delegate: self)
             converter.beginConversion(sentence: str)
             self.showWaitingScreen()
@@ -42,8 +46,9 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     }
 
     func didTranslate(_ string: String) {
-        print(string)
+        self.hiraganaResult = string
         self.hideWaitingScreen()
+        self.performSegue(withIdentifier: "showResultSegue", sender: self)
     }
     
     func errorOccured(_ string: String) {
@@ -53,6 +58,15 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
         let action = UIAlertAction.init(title: "OK", style: .default, handler: nil)
         controller.addAction(action)
         self.present(controller, animated: true, completion: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showResultSegue" {
+            let vc = segue.destination as! ResultViewController
+            vc.delegate = self
+            vc.originalSentence = self.originalSentence
+            vc.hiraganaResult = self.hiraganaResult
+        }
     }
 
     

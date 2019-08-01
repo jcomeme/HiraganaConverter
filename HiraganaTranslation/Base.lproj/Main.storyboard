@@ -24,12 +24,12 @@
                                     <constraint firstAttribute="height" constant="40" id="SHO-Av-mz6"/>
                                 </constraints>
                                 <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SN2-A9-V7I">
-                                <rect key="frame" x="145.5" y="475" width="123" height="36"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <rect key="frame" x="127.5" y="475" width="159" height="44"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="26"/>
                                 <state key="normal" title="ひらがな変換"/>
                                 <connections>
                                     <action selector="convert" destination="BYZ-38-t0r" eventType="touchUpInside" id="PG1-FM-Syl"/>
@@ -68,11 +68,66 @@
                         <outlet property="indicator" destination="grm-d3-sUK" id="uTi-hw-nrZ"/>
                         <outlet property="inputField" destination="epY-vv-Oe8" id="AAu-17-qfS"/>
                         <outlet property="waitingScreenView" destination="lhe-kK-IuF" id="lqS-wc-iNV"/>
+                        <segue destination="qIZ-fc-JAH" kind="presentation" identifier="showResultSegue" id="qBw-a6-OLs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="131.8840579710145" y="112.5"/>
+        </scene>
+        <!--Result View Controller-->
+        <scene sceneID="pt1-Xt-9tT">
+            <objects>
+                <viewController id="qIZ-fc-JAH" customClass="ResultViewController" customModule="HiraganaTranslation" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="l6R-Nj-eIi">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="6" translatesAutoresizingMaskIntoConstraints="NO" id="TIp-U3-kgY">
+                                <rect key="frame" x="20" y="430" width="374" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="6" translatesAutoresizingMaskIntoConstraints="NO" id="dzT-n6-7O0">
+                                <rect key="frame" x="20" y="344" width="374" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="y8w-UK-Sy1">
+                                <rect key="frame" x="20" y="516" width="374" height="44"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                                <state key="normal" title="戻る"/>
+                                <connections>
+                                    <action selector="backToInput" destination="qIZ-fc-JAH" eventType="touchUpInside" id="cYD-IJ-fEH"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="TIp-U3-kgY" firstAttribute="centerY" secondItem="l6R-Nj-eIi" secondAttribute="centerY" id="AwF-uJ-sPr"/>
+                            <constraint firstItem="TIp-U3-kgY" firstAttribute="leading" secondItem="BCt-iN-YJO" secondAttribute="leading" constant="20" id="Bre-7q-aMX"/>
+                            <constraint firstItem="dzT-n6-7O0" firstAttribute="centerX" secondItem="l6R-Nj-eIi" secondAttribute="centerX" id="GEt-Ib-KzM"/>
+                            <constraint firstItem="TIp-U3-kgY" firstAttribute="top" secondItem="dzT-n6-7O0" secondAttribute="bottom" constant="50" id="HWg-TA-SSX"/>
+                            <constraint firstItem="BCt-iN-YJO" firstAttribute="trailing" secondItem="TIp-U3-kgY" secondAttribute="trailing" constant="20" id="M8j-ia-YDS"/>
+                            <constraint firstItem="TIp-U3-kgY" firstAttribute="centerX" secondItem="l6R-Nj-eIi" secondAttribute="centerX" id="aP3-cR-I82"/>
+                            <constraint firstItem="BCt-iN-YJO" firstAttribute="trailing" secondItem="y8w-UK-Sy1" secondAttribute="trailing" constant="20" id="cMe-ja-vyU"/>
+                            <constraint firstItem="y8w-UK-Sy1" firstAttribute="top" secondItem="TIp-U3-kgY" secondAttribute="bottom" constant="50" id="feh-VI-3hN"/>
+                            <constraint firstItem="y8w-UK-Sy1" firstAttribute="leading" secondItem="BCt-iN-YJO" secondAttribute="leading" constant="20" id="jkG-tG-WQu"/>
+                            <constraint firstItem="dzT-n6-7O0" firstAttribute="leading" secondItem="BCt-iN-YJO" secondAttribute="leading" constant="20" id="kth-Xd-K9Y"/>
+                            <constraint firstItem="BCt-iN-YJO" firstAttribute="trailing" secondItem="dzT-n6-7O0" secondAttribute="trailing" constant="20" id="vgq-aP-VMP"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="BCt-iN-YJO"/>
+                    </view>
+                    <connections>
+                        <outlet property="hiraganaResultLabel" destination="TIp-U3-kgY" id="0QN-16-GSh"/>
+                        <outlet property="originalSentenceLabel" destination="dzT-n6-7O0" id="hc3-Ml-Omg"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="k0d-5p-Wgc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="989.85507246376824" y="112.5"/>
         </scene>
     </scenes>
 </document>

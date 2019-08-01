@@ -46,7 +46,6 @@ class HiraganaConverter: NSObject, JCURLSessionDelegate {
         } catch {
             self.delegate?.errorOccured(error.localizedDescription)
         }
-        
     }
     
     

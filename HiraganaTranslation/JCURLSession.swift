@@ -17,8 +17,8 @@ protocol JCURLSessionDelegate{
 
 
 class JCURLSession: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate, URLSessionDownloadDelegate{
+    
     var delegate:JCURLSessionDelegate?
-
     var strData:Data?
     
     
@@ -46,7 +46,6 @@ class JCURLSession: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate, UR
             delegate?.didReceiveError("URLが有効ではないよ")
             session.invalidateAndCancel()
         }
-        
     }
     
     
@@ -67,7 +66,6 @@ class JCURLSession: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate, UR
             delegate?.didReceiveError("URLが有効ではないよ")
             session.invalidateAndCancel()
         }
-
     }
     
     
@@ -79,10 +77,7 @@ class JCURLSession: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate, UR
         config.timeoutIntervalForRequest = TimeInterval(10)
         config.timeoutIntervalForResource = TimeInterval(60 * 60 * 24)
         
-        
         let session = URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue.main)
-        
-        
 
         if let uri = URL(string: url), let met = method, let pl = payload{
             
@@ -91,7 +86,6 @@ class JCURLSession: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate, UR
             request.httpMethod = met
             let myData: Data = pl.data(using: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
             request.httpBody = myData as Data
-
 
             let task: URLSessionDataTask = session.dataTask(with: request)
 
