@@ -26,6 +26,8 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        
         //To move inputViewSet when software keyboard will be shown or hidden.
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardWillShow(_:)),
@@ -71,7 +73,11 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     func didConvert(_ string: String) {
         self.hiraganaResult = string
         self.hideWaitingScreen()
-        self.performSegue(withIdentifier: "showResultSegue", sender: self)
+        //self.performSegue(withIdentifier: "showResultSegue", sender: self)
+        let vert = VerticalResultViewController()
+        vert.delegate = self
+        vert.originalSentence = self.self.originalSentence
+        self.present(vert, animated: true, completion: nil)
     }
     
     

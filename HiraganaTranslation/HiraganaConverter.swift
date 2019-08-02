@@ -29,6 +29,36 @@ class HiraganaConverter: NSObject, JCURLSessionDelegate {
     }
     
 
+    func synchronousConversion(sentence:String) -> String?{
+        let session = JCURLSession(delegate: self)
+        struct RequestBody:Codable {
+            let app_id:String
+            let sentence:String
+            let output_type:String
+        }
+        
+        let requestBody = RequestBody.init(app_id: appID, sentence: sentence, output_type: "hiragana")
+        
+        let encoder = JSONEncoder()
+        do {
+            let data = try encoder.encode(requestBody)
+            let jsonstr:String = String(data: data, encoding: .utf8)!
+            let result = session.synchronousJSONHttpRequest(url: "https://labs.goo.ne.jp/api/hiragana",
+                                    method: "POST",
+                                    jSON: jsonstr)
+            if let rst = result{
+                let items = try JSONSerialization.jsonObject(with: rst, options: []) as! Dictionary<String, Any>
+                if items.keys.contains("converted"), let converted = items["converted"] as? String{
+                    return converted
+                }
+            }
+        } catch {
+            return nil
+        }
+        return nil
+    }
+    
+    
     func beginConversion(sentence:String){
         let session = JCURLSession(delegate: self)
         struct RequestBody:Codable {

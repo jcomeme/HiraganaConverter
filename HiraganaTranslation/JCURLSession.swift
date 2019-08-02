@@ -55,6 +55,36 @@ class JCURLSession: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate{
         }
     }
     
+    
+    func synchronousJSONHttpRequest(url:String, method:String?, jSON:String?) -> Data?{
+
+        let session = URLSession.shared
+        
+        if let uri = URL(string: url), let met = method, let payload = jSON{
+            //リクエスト生成
+            var request: URLRequest = URLRequest(url: uri)
+            request.httpMethod = met
+            let myData: Data = payload.data(using: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
+            request.httpBody = myData as Data
+            request.addValue("application/json; charaset=utf-8", forHTTPHeaderField: "Content-Type")
+            var result:Data? = nil
+            let semaphore = DispatchSemaphore(value: 0)
+            session.dataTask(with: request) { (data, response, error) -> Void in
+                if let dt = data{
+                    result = dt
+                }
+                semaphore.signal()
+                }
+                .resume()
+            semaphore.wait()
+            return result
+        }else{
+            delegate?.didReceiveError("URLが有効ではないよ")
+            session.invalidateAndCancel()
+        }
+        return nil
+    }
+    
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         strData?.append(data)
