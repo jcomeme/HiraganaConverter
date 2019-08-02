@@ -12,7 +12,6 @@
 		433F609422F27AC300C0FAC3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 433F609222F27AC300C0FAC3 /* Main.storyboard */; };
 		433F609622F27AC400C0FAC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 433F609522F27AC400C0FAC3 /* Assets.xcassets */; };
 		433F609922F27AC400C0FAC3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 433F609722F27AC400C0FAC3 /* LaunchScreen.storyboard */; };
-		433F60A422F27AC400C0FAC3 /* HiraganaTranslationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 433F60A322F27AC400C0FAC3 /* HiraganaTranslationTests.swift */; };
 		433F60AF22F27B0500C0FAC3 /* HiraganaConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 433F60AE22F27B0500C0FAC3 /* HiraganaConverter.swift */; };
 		433F60B122F27CA900C0FAC3 /* JCURLSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 433F60B022F27CA900C0FAC3 /* JCURLSession.swift */; };
 		433F60B322F2D1C100C0FAC3 /* ResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 433F60B222F2D1C100C0FAC3 /* ResultViewController.swift */; };
@@ -37,8 +36,6 @@
 		433F609822F27AC400C0FAC3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		433F609A22F27AC400C0FAC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		433F609F22F27AC400C0FAC3 /* HiraganaTranslationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HiraganaTranslationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		433F60A322F27AC400C0FAC3 /* HiraganaTranslationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiraganaTranslationTests.swift; sourceTree = "<group>"; };
-		433F60A522F27AC400C0FAC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		433F60AE22F27B0500C0FAC3 /* HiraganaConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HiraganaConverter.swift; sourceTree = "<group>"; };
 		433F60B022F27CA900C0FAC3 /* JCURLSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JCURLSession.swift; sourceTree = "<group>"; };
 		433F60B222F2D1C100C0FAC3 /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
@@ -66,7 +63,6 @@
 			isa = PBXGroup;
 			children = (
 				433F608D22F27AC300C0FAC3 /* HiraganaTranslation */,
-				433F60A222F27AC400C0FAC3 /* HiraganaTranslationTests */,
 				433F608C22F27AC300C0FAC3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -94,15 +90,6 @@
 				433F609A22F27AC400C0FAC3 /* Info.plist */,
 			);
 			path = HiraganaTranslation;
-			sourceTree = "<group>";
-		};
-		433F60A222F27AC400C0FAC3 /* HiraganaTranslationTests */ = {
-			isa = PBXGroup;
-			children = (
-				433F60A322F27AC400C0FAC3 /* HiraganaTranslationTests.swift */,
-				433F60A522F27AC400C0FAC3 /* Info.plist */,
-			);
-			path = HiraganaTranslationTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -218,7 +205,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				433F60A422F27AC400C0FAC3 /* HiraganaTranslationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

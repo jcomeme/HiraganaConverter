@@ -8,21 +8,35 @@
 
 import UIKit
 
+
+
 class ViewController: UIViewController, HiraganaConverterDelegate{
     
-    //キーボード表示と非表示の処理を追記する
     
     @IBOutlet var inputField:UITextField!
     @IBOutlet var waitingScreenView:UIView!
     @IBOutlet var indicator:UIActivityIndicatorView!
+    @IBOutlet var inputViewSet:UIView!
+    @IBOutlet var yConstraint:NSLayoutConstraint!
     
     var originalSentence:String?
     var hiraganaResult:String?
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        //To move inputViewSet when software keyboard will be shown or hidden.
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow(_:)),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillHide(_:)),
+                                               name: UIResponder.keyboardWillHideNotification,
+                                               object: nil)
     }
+
     
     @IBAction func convert(){
         if let str = inputField.text, str.count > 0{
@@ -32,6 +46,11 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
             self.showWaitingScreen()
         }
     }
+    
+    @IBAction func viewWasTaped(){
+        self.inputField.resignFirstResponder()
+    }
+    
     
     func showWaitingScreen(){
         self.indicator.startAnimating()
@@ -47,20 +66,24 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
         })
     }
 
-    func didTranslate(_ string: String) {
+    
+    //HiraganaConverterDelegate method
+    func didConvert(_ string: String) {
         self.hiraganaResult = string
         self.hideWaitingScreen()
         self.performSegue(withIdentifier: "showResultSegue", sender: self)
     }
     
+    
+    //HiraganaConverterDelegate method
     func errorOccured(_ string: String) {
         self.hideWaitingScreen()
-        print(string)
         let controller = UIAlertController.init(title: "エラー", message: string, preferredStyle: .alert)
         let action = UIAlertAction.init(title: "OK", style: .default, handler: nil)
         controller.addAction(action)
         self.present(controller, animated: true, completion: nil)
     }
+    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showResultSegue" {
@@ -72,6 +95,39 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     }
 
     
-
+    @objc func keyboardWillShow(_ notification:Notification){
+        guard let userInfo = notification.userInfo as? [String: Any] else {
+            return
+        }
+        guard let keyboardInfo = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else {
+            return
+        }
+        guard let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else {
+            return
+        }
+        let keyboardSize = keyboardInfo.cgRectValue.size
+        UIView.animate(withDuration: duration, animations: {
+            self.yConstraint.isActive = false
+            self.yConstraint = self.inputViewSet.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant:(keyboardSize.height * -1))
+            self.yConstraint.isActive = true
+            self.view.layoutIfNeeded()
+        })
+    }
+    
+    
+    @objc func keyboardWillHide(_ notification:Notification){
+        guard let userInfo = notification.userInfo as? [String: Any] else {
+            return
+        }
+        guard let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double else {
+            return
+        }
+        UIView.animate(withDuration: duration, animations: {
+            self.yConstraint.isActive = false
+            self.yConstraint = self.inputViewSet.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+            self.yConstraint.isActive = true
+            self.view.layoutIfNeeded()
+        })
+    }
 }
 

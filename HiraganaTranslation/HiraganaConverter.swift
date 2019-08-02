@@ -8,16 +8,19 @@
 
 import UIKit
 
+
 protocol HiraganaConverterDelegate{
-    func didTranslate(_ string:String)
+    func didConvert(_ string:String)
     func errorOccured(_ string:String)
 }
 
+
+//Convert sentence to hiragana.
 class HiraganaConverter: NSObject, JCURLSessionDelegate {
+    
     
     let appID = "e5603cc32e0049e2551bd5f52f6657691b4feb05902166189fe76da204b2437e"
     var delegate:HiraganaConverterDelegate?
-
     
     
     required init(delegate dlg:HiraganaConverterDelegate){
@@ -40,17 +43,16 @@ class HiraganaConverter: NSObject, JCURLSessionDelegate {
         do {
             let data = try encoder.encode(requestBody)
             let jsonstr:String = String(data: data, encoding: .utf8)!
-            session.JSONHttpRequest(url: "https://labs.goo.ne.jp/api/hiragana",
+            session.jSONHttpRequest(url: "https://labs.goo.ne.jp/api/hiragana",
                                     method: "POST",
-                                    JSON: jsonstr)
+                                    jSON: jsonstr)
         } catch {
             self.delegate?.errorOccured(error.localizedDescription)
         }
     }
     
     
-    
-    
+    //JCURLSessionDelegate method
     func didReceiveData(_ data: Data) {
         do {
             let items = try JSONSerialization.jsonObject(with: data, options: []) as! Dictionary<String, Any>
@@ -64,7 +66,7 @@ class HiraganaConverter: NSObject, JCURLSessionDelegate {
                 }
             }else{
                 if items.keys.contains("converted"), let converted = items["converted"] as? String{
-                    self.delegate?.didTranslate(converted)
+                    self.delegate?.didConvert(converted)
                 }else{
                     self.delegate?.errorOccured("不明なエラーです")
                 }
@@ -74,18 +76,11 @@ class HiraganaConverter: NSObject, JCURLSessionDelegate {
         }
     }
     
+    
+    //JCURLSessionDelegate method
     func didReceiveError(_ error: String) {
         self.delegate?.errorOccured(error)
     }
-    
-    func downloadProgress(_ progress: (Int64, Int64)) {
-        //print(progress)
-    }
-    
-    func didReceiveDataAsString(_ string: String) {
-        //print(string)
-    }
-    
     
 
 }
