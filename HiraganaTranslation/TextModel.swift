@@ -24,7 +24,38 @@ class TextModel: NSObject{
     }
 
     
-
+    func sizeOfView(size:CGSize, attrStr:NSAttributedString) -> CGSize{
+        var pageArray = [CFRange]()
+        let path:CGMutablePath = CGMutablePath();
+        let bounds:CGRect = CGRect(x: 0, y: 0 , width:size.height , height:(size.width / 4))//幅と高さを
+        path.addRect(bounds)
+        let framesetter :CTFramesetter = CTFramesetterCreateWithAttributedString(attrStr);
+        var range = CFRangeMake(0, 0)
+        var indexCounter = 0
+        var counter = 0
+        
+        var lastRange = CFRangeMake(0, 0)
+        
+        while(true){
+            print(counter)
+            counter += 1
+            print(indexCounter)
+            
+            //let csize:CGSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, range, nil, size, nil)
+            
+            let frame:CTFrame = CTFramesetterCreateFrame(framesetter, range, path, nil);
+            let tempRange = CTFrameGetVisibleStringRange(frame)
+            if tempRange.length == 0{
+                break
+            }
+            lastRange = tempRange
+            pageArray.append(tempRange)
+            indexCounter += tempRange.length
+            range = CFRangeMake(indexCounter, 0)
+        }
+        return CGSize(width: Int(CGFloat(pageArray.count) * (size.width) / 4), height: Int(size.height))
+    }
+    
     
     
     func createAttributedString() -> NSAttributedString{

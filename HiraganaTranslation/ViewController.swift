@@ -13,7 +13,7 @@ import UIKit
 class ViewController: UIViewController, HiraganaConverterDelegate{
     
     
-    @IBOutlet var inputField:UITextField!
+    @IBOutlet var inputField:UITextView!
     @IBOutlet var waitingScreenView:UIView!
     @IBOutlet var indicator:UIActivityIndicatorView!
     @IBOutlet var inputViewSet:UIView!
@@ -25,6 +25,12 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        inputField.text = ""
+        inputField.layer.borderWidth = 1
+        inputField.layer.cornerRadius = 5
+        inputField.layer.borderColor = UIColor.lightGray.cgColor
+        inputField.becomeFirstResponder()
+        
         
         //To move inputViewSet when software keyboard will be shown or hidden.
         NotificationCenter.default.addObserver(self,
