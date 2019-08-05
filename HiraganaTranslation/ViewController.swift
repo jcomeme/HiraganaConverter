@@ -95,7 +95,11 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     }
 
     
+
+    // Move inputViewSet when keyboard will be shown.
     @objc func keyboardWillShow(_ notification:Notification){
+        self.view.layoutIfNeeded()
+        
         guard let userInfo = notification.userInfo as? [String: Any] else {
             return
         }
@@ -106,15 +110,19 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
             return
         }
         let keyboardSize = keyboardInfo.cgRectValue.size
-        UIView.animate(withDuration: duration, animations: {
-            self.yConstraint.isActive = false
-            self.yConstraint = self.inputViewSet.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant:(keyboardSize.height * -1))
-            self.yConstraint.isActive = true
-            self.view.layoutIfNeeded()
-        })
+        let keyboardOrigin = keyboardInfo.cgRectValue.origin
+        
+        if (inputViewSet.frame.origin.y + inputViewSet.frame.size.height) > keyboardOrigin.y {
+            UIView.animate(withDuration: duration, animations: {
+                self.yConstraint.isActive = false
+                self.yConstraint = self.inputViewSet.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant:(-keyboardSize.height))
+                self.yConstraint.isActive = true
+                self.view.layoutIfNeeded()
+            })
+        }
     }
     
-    
+    // Move inputViewSet to self.view.centerY when keyboard will be hidden.
     @objc func keyboardWillHide(_ notification:Notification){
         guard let userInfo = notification.userInfo as? [String: Any] else {
             return
