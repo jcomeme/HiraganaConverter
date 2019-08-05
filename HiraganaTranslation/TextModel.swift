@@ -9,83 +9,25 @@
 import UIKit
 import CoreText
 
-class TextModel: NSObject, HiraganaConverterDelegate {
-    func didConvert(_ string: String) {
-        
-    }
-    
-    func errorOccured(_ string: String) {
-        
-    }
+class TextModel: NSObject{
+
     
     var originalText = ""
     var fontSize: CGFloat = 20
     var fontName = "HiraMinProN-W3"
-    var rect = CGRect()
-    var content = NSAttributedString()
-    var pageRangeArray = [CFRange]()
-    
-    
-    
-    
-    
-    func setContent(content:String, rect:CGRect){
-        self.originalText = content
-        self.rect = rect
-    }
-    
-    
-    func addRuby(_ sampleText:String) -> String{
 
-        var resultText = ""
-        var tempString = ""
-        var hiraganaMode = true
-        var stringIndex = sampleText.startIndex
-        
-        let hc = HiraganaConverter(delegate: self)
-        
-        while true{
-            if stringIndex == sampleText.endIndex{
-                if hiraganaMode == false{
-                    resultText += "《"
-                    if let str = hc.synchronousConversion(sentence: tempString){
-                        resultText += str
-                    }
-                    tempString = ""
-                    resultText += "》"
-                }
-                break
-            }
-            let char = String(sampleText[stringIndex ..< sampleText.index(after: stringIndex)])
-            print(char)
-            
-            if hiraganaMode == true, char.isHiragana == false{
-                hiraganaMode = false
-                resultText += "|"
-                tempString += char
-            }else if hiraganaMode == false, char.isHiragana == false{
-                tempString += char
-            }else if hiraganaMode == false, char.isHiragana == true{
-                hiraganaMode = true
-                resultText += "《"
-                if let str = hc.synchronousConversion(sentence: tempString){
-                    resultText += str
-                }
-                tempString = ""
-                resultText += "》"
-            }
-            resultText += char
-            
-            stringIndex = sampleText.index(after: stringIndex)
-        }
-        return resultText
+    
+    
+    
+    required init(content:String) {
+        self.originalText = content
     }
+
+    
+
     
     
-    
-    
-    func createPage(){
-        self.originalText = addRuby(originalText)
+    func createAttributedString() -> NSAttributedString{
         
         let font = UIFont.init(name: fontName, size: fontSize)
         let leading = (font?.lineHeight)! - (font?.ascender)! + (font?.descender)!
@@ -144,41 +86,13 @@ class TextModel: NSObject, HiraganaConverterDelegate {
                 return $0
         }
         
-        self.content = attrstring
-        self.pageRangeArray = self.paging(size: self.rect.size, attrStr: attrstring)
+        return attrstring
     }
     
     
     
     
-    func paging(size:CGSize, attrStr:NSAttributedString) -> [CFRange]{
-        var pageArray = [CFRange]()
-        let path:CGMutablePath = CGMutablePath();
-        let bounds:CGRect = CGRect(x: 0, y: 0 , width:size.height , height:size.width)//幅と高さを
-        path.addRect(bounds)
-        let framesetter :CTFramesetter = CTFramesetterCreateWithAttributedString(attrStr);
-        var range = CFRangeMake(0, 0)
-        var indexCounter = 0
-        var counter = 0
-        
-        while(true){
-            print(counter)
-            counter += 1
-            print(indexCounter)
-            
-            let frame:CTFrame = CTFramesetterCreateFrame(framesetter, range, path, nil);
-            let tempRange = CTFrameGetVisibleStringRange(frame)
-            
-            if tempRange.length == 0{
-                break
-            }
-            pageArray.append(tempRange)
-            indexCounter += tempRange.length
-            range = CFRangeMake(indexCounter, 0)
-        }
-        
-        return pageArray
-    }
+    
 }
 
 

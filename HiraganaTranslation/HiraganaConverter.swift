@@ -14,13 +14,22 @@ protocol HiraganaConverterDelegate{
     func errorOccured(_ string:String)
 }
 
+enum XMLReadingMode:String{
+    case none = "none"
+    case surface = "surface"
+    case furigana = "furigana"
+}
+
 
 //Convert sentence to hiragana.
-class HiraganaConverter: NSObject, JCURLSessionDelegate {
+class HiraganaConverter: NSObject, JCURLSessionDelegate, XMLParserDelegate {
     
     
-    let appID = "e5603cc32e0049e2551bd5f52f6657691b4feb05902166189fe76da204b2437e"
+    let appID = "dj00aiZpPUVSWFN2cWozMkl4ViZzPWNvbnN1bWVyc2VjcmV0Jng9ODY-"
     var delegate:HiraganaConverterDelegate?
+    var mode:XMLReadingMode = .none
+    var tempStringDict = [["surface":"", "furigana":""]]
+    var resultString = ""
     
     
     required init(delegate dlg:HiraganaConverterDelegate){
@@ -28,89 +37,86 @@ class HiraganaConverter: NSObject, JCURLSessionDelegate {
         self.delegate = dlg
     }
     
-
-    func synchronousConversion(sentence:String) -> String?{
-        let session = JCURLSession(delegate: self)
-        struct RequestBody:Codable {
-            let app_id:String
-            let sentence:String
-            let output_type:String
-        }
-        
-        let requestBody = RequestBody.init(app_id: appID, sentence: sentence, output_type: "hiragana")
-        
-        let encoder = JSONEncoder()
-        do {
-            let data = try encoder.encode(requestBody)
-            let jsonstr:String = String(data: data, encoding: .utf8)!
-            let result = session.synchronousJSONHttpRequest(url: "https://labs.goo.ne.jp/api/hiragana",
-                                    method: "POST",
-                                    jSON: jsonstr)
-            if let rst = result{
-                let items = try JSONSerialization.jsonObject(with: rst, options: []) as! Dictionary<String, Any>
-                if items.keys.contains("converted"), let converted = items["converted"] as? String{
-                    return converted
-                }
-            }
-        } catch {
-            return nil
-        }
-        return nil
-    }
-    
     
     func beginConversion(sentence:String){
+        let str:String = "appid=" + self.appID + "&sentence=" + sentence + "&grade=1"
         let session = JCURLSession(delegate: self)
-        struct RequestBody:Codable {
-            let app_id:String
-            let sentence:String
-            let output_type:String
-        }
-        
-        let requestBody = RequestBody.init(app_id: appID, sentence: sentence, output_type: "hiragana")
-        
-        let encoder = JSONEncoder()
-        do {
-            let data = try encoder.encode(requestBody)
-            let jsonstr:String = String(data: data, encoding: .utf8)!
-            session.jSONHttpRequest(url: "https://labs.goo.ne.jp/api/hiragana",
-                                    method: "POST",
-                                    jSON: jsonstr)
-        } catch {
-            self.delegate?.errorOccured(error.localizedDescription)
-        }
+        session.httpRequest(url: "https://jlp.yahooapis.jp/FuriganaService/V1/furigana",
+                            method: "POST",
+                            payload: str)
     }
     
     
     //JCURLSessionDelegate method
     func didReceiveData(_ data: Data) {
-        do {
-            let items = try JSONSerialization.jsonObject(with: data, options: []) as! Dictionary<String, Any>
-            
-            if items.keys.contains("error"){
-                let errDict = items["error"] as? Dictionary<String, Any> ?? Dictionary()
-                if let msg = errDict["message"] as? String{
-                    self.delegate?.errorOccured(msg)
-                }else{
-                    self.delegate?.errorOccured("不明なエラーです")
-                }
-            }else{
-                if items.keys.contains("converted"), let converted = items["converted"] as? String{
-                    self.delegate?.didConvert(converted)
-                }else{
-                    self.delegate?.errorOccured("不明なエラーです")
-                }
-            }
-        } catch(let err) {
-            self.delegate?.errorOccured(err.localizedDescription)
-        }
+        //print(String(data:data, encoding: String.Encoding.utf8))
+        let parser = XMLParser.init(data: data)
+        parser.delegate = self
+        parser.parse()
     }
-    
     
     //JCURLSessionDelegate method
     func didReceiveError(_ error: String) {
         self.delegate?.errorOccured(error)
     }
     
+    
+    //XMLParserDelegate method
+    func parserDidStartDocument(_ parser: XMLParser) {
+        self.resultString = ""
+    }
+    
+    //XMLParserDelegate method
+    func parserDidEndDocument(_ parser: XMLParser) {
+        self.delegate?.didConvert(resultString)
+    }
 
+    //XMLParserDelegate method
+    func parser(_ parser: XMLParser, foundCharacters string: String) {
+        writeToTemp(string)
+    }
+    
+    //XMLParserDelegate method
+    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
+        if elementName == "Surface"{
+            self.mode = .surface
+        }else if elementName == "Furigana"{
+            self.mode = .furigana
+        }else if elementName == "SubWordList"{
+            self.tempStringDict = [["surface":"", "furigana":""]]
+        }
+    }
+    
+    //XMLParserDelegate method
+    func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+        self.mode = .none
+        if elementName == "Word"{
+            for item in self.tempStringDict{
+                if item["furigana"]!.count > 0, item["surface"]!.isHiragana == false{
+                    let str = "|" + item["surface"]! + "《" + item["furigana"]! + "》"
+                    resultString += str
+                }else if item["surface"]!.count > 0{
+                    resultString += item["surface"]!
+                }
+            }
+            self.tempStringDict = [["surface":"", "furigana":""]]
+        }else if elementName == "SubWord"{
+            self.tempStringDict.append(["surface":"", "furigana":""])
+        }
+    }
+
+    //XMLParserDelegate method
+    func parser(_ parser: XMLParser, parseErrorOccurred parseError: Error) {
+        self.delegate?.errorOccured(parseError.localizedDescription)
+        parser.abortParsing()
+    }
+    
+    
+    func writeToTemp(_ str:String){
+        if self.mode != .none{
+            tempStringDict[tempStringDict.endIndex - 1][self.mode.rawValue] = str
+        }
+    }
+    
+    
 }

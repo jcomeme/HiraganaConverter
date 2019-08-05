@@ -26,8 +26,6 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        
         //To move inputViewSet when software keyboard will be shown or hidden.
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(keyboardWillShow(_:)),
@@ -71,12 +69,13 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     
     //HiraganaConverterDelegate method
     func didConvert(_ string: String) {
+
         self.hiraganaResult = string
         self.hideWaitingScreen()
         //self.performSegue(withIdentifier: "showResultSegue", sender: self)
         let vert = VerticalResultViewController()
         vert.delegate = self
-        vert.originalSentence = self.self.originalSentence
+        vert.originalSentence = self.hiraganaResult
         self.present(vert, animated: true, completion: nil)
     }
     
@@ -91,17 +90,13 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     }
     
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showResultSegue" {
-            let vc = segue.destination as! ResultViewController
-            vc.delegate = self
-            vc.originalSentence = self.originalSentence
-            vc.hiraganaResult = self.hiraganaResult
-        }
-    }
 
     
+
+    // Move inputViewSet when keyboard will be shown.
     @objc func keyboardWillShow(_ notification:Notification){
+        self.view.layoutIfNeeded()
+        
         guard let userInfo = notification.userInfo as? [String: Any] else {
             return
         }
@@ -112,15 +107,19 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
             return
         }
         let keyboardSize = keyboardInfo.cgRectValue.size
-        UIView.animate(withDuration: duration, animations: {
-            self.yConstraint.isActive = false
-            self.yConstraint = self.inputViewSet.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant:(keyboardSize.height * -1))
-            self.yConstraint.isActive = true
-            self.view.layoutIfNeeded()
-        })
+        let keyboardOrigin = keyboardInfo.cgRectValue.origin
+        
+        if (inputViewSet.frame.origin.y + inputViewSet.frame.size.height) > keyboardOrigin.y {
+            UIView.animate(withDuration: duration, animations: {
+                self.yConstraint.isActive = false
+                self.yConstraint = self.inputViewSet.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant:(-keyboardSize.height))
+                self.yConstraint.isActive = true
+                self.view.layoutIfNeeded()
+            })
+        }
     }
     
-    
+    // Move inputViewSet to self.view.centerY when keyboard will be hidden.
     @objc func keyboardWillHide(_ notification:Notification){
         guard let userInfo = notification.userInfo as? [String: Any] else {
             return
