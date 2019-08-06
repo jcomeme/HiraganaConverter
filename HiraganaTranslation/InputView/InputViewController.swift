@@ -10,21 +10,28 @@ import UIKit
 
 
 
-class ViewController: UIViewController, HiraganaConverterDelegate{
+class InputViewController: UIViewController, HiraganaConverterDelegate{
     
     
-    @IBOutlet var inputField:UITextField!
+    @IBOutlet var inputField:UITextView!
     @IBOutlet var waitingScreenView:UIView!
     @IBOutlet var indicator:UIActivityIndicatorView!
     @IBOutlet var inputViewSet:UIView!
     @IBOutlet var yConstraint:NSLayoutConstraint!
+    @IBOutlet var topConstraint:NSLayoutConstraint!
     
-    var originalSentence:String?
     var hiraganaResult:String?
-
+    var converter:HiraganaConverter?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        inputField.text = ""
+        inputField.layer.borderWidth = 1
+        inputField.layer.cornerRadius = 5
+        inputField.layer.borderColor = UIColor.lightGray.cgColor
+        inputField.becomeFirstResponder()
+        
         
         //To move inputViewSet when software keyboard will be shown or hidden.
         NotificationCenter.default.addObserver(self,
@@ -40,9 +47,8 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     
     @IBAction func convert(){
         if let str = inputField.text, str.count > 0{
-            self.originalSentence = str
-            let converter = HiraganaConverter(delegate: self)
-            converter.beginConversion(sentence: str)
+            converter = HiraganaConverter(delegate: self)
+            converter?.beginConversion(sentence: str)
             self.showWaitingScreen()
         }
     }
@@ -51,12 +57,18 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
         self.inputField.resignFirstResponder()
     }
     
+    @IBAction func cancelTask(){
+        converter?.cancelTask()
+        self.hideWaitingScreen()
+    }
     
     func showWaitingScreen(){
+        
         self.indicator.startAnimating()
         UIView.animate(withDuration: 3, animations: {
             self.waitingScreenView.isHidden = false
         })
+ 
     }
     
     func hideWaitingScreen(){
@@ -69,9 +81,14 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     
     //HiraganaConverterDelegate method
     func didConvert(_ string: String) {
-        self.hiraganaResult = string
-        self.hideWaitingScreen()
-        self.performSegue(withIdentifier: "showResultSegue", sender: self)
+        
+        //self.performSegue(withIdentifier: "showResultSegue", sender: self)
+        let vert = VerticalResultViewController()
+        vert.delegate = self
+        vert.convertedSentence = string
+        self.present(vert, animated: true, completion: {
+            self.hideWaitingScreen()
+        })
     }
     
     
@@ -85,17 +102,13 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     }
     
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showResultSegue" {
-            let vc = segue.destination as! ResultViewController
-            vc.delegate = self
-            vc.originalSentence = self.originalSentence
-            vc.hiraganaResult = self.hiraganaResult
-        }
-    }
 
     
+
+    // Move inputViewSet when keyboard will be shown.
     @objc func keyboardWillShow(_ notification:Notification){
+        self.view.layoutIfNeeded()
+        
         guard let userInfo = notification.userInfo as? [String: Any] else {
             return
         }
@@ -106,15 +119,23 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
             return
         }
         let keyboardSize = keyboardInfo.cgRectValue.size
-        UIView.animate(withDuration: duration, animations: {
-            self.yConstraint.isActive = false
-            self.yConstraint = self.inputViewSet.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant:(keyboardSize.height * -1))
-            self.yConstraint.isActive = true
-            self.view.layoutIfNeeded()
-        })
+        let keyboardOrigin = keyboardInfo.cgRectValue.origin
+        
+        if (inputViewSet.frame.origin.y + inputViewSet.frame.size.height) > keyboardOrigin.y {
+            UIView.animate(withDuration: duration, animations: {
+                self.yConstraint.isActive = false
+                self.yConstraint = self.inputViewSet.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant:(-keyboardSize.height))
+                self.yConstraint.isActive = true
+                self.topConstraint.isActive = false
+                self.topConstraint = self.inputViewSet.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant:10)
+                self.topConstraint.isActive = true
+                self.view.layoutIfNeeded()
+            })
+        }
     }
     
     
+    // Move inputViewSet to self.view.centerY when keyboard will be hidden.
     @objc func keyboardWillHide(_ notification:Notification){
         guard let userInfo = notification.userInfo as? [String: Any] else {
             return
@@ -126,8 +147,13 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
             self.yConstraint.isActive = false
             self.yConstraint = self.inputViewSet.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
             self.yConstraint.isActive = true
+            self.topConstraint.isActive = false
+            self.topConstraint = self.inputViewSet.heightAnchor.constraint(equalToConstant: 240)
+            self.topConstraint.isActive = true
             self.view.layoutIfNeeded()
         })
     }
+    
+    
 }
 

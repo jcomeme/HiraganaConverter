@@ -22,50 +22,56 @@ class JCURLSession: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate{
     
     var delegate:JCURLSessionDelegate?
     var strData:Data?
+    var task:URLSessionDataTask?
     
     
     required init(delegate dlg:JCURLSessionDelegate){
         super.init()
-        delegate = dlg
+        self.delegate = dlg
     }
 
-    
-    func jSONHttpRequest(url:String, method:String?, jSON:String?){
+    func httpRequest(url:String, method:String?, payload:String?){
         strData = nil
         strData = Data()
         
         let config = URLSessionConfiguration.background(withIdentifier: "bgreq")
-        config.timeoutIntervalForRequest = TimeInterval(5)
+        config.timeoutIntervalForRequest = TimeInterval(10)
         config.timeoutIntervalForResource = TimeInterval(60 * 60 * 24)
         
         let session = URLSession(configuration: config, delegate: self, delegateQueue: OperationQueue.main)
         
-        if let uri = URL(string: url), let met = method, let payload = jSON{
+        if let uri = URL(string: url), let met = method, let pl = payload{
             //リクエスト生成
             var request: URLRequest = URLRequest(url: uri)
             request.httpMethod = met
-            let myData: Data = payload.data(using: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
+            let myData: Data = pl.data(using: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
             request.httpBody = myData as Data
-            request.addValue("application/json; charaset=utf-8", forHTTPHeaderField: "Content-Type")
-            let task: URLSessionDataTask = session.dataTask(with: request)
-            task.resume()
+            
+            self.task = session.dataTask(with: request)
+            task?.resume()
         }else{
-            delegate?.didReceiveError("URLが有効ではないよ")
+            self.delegate?.didReceiveError("URLが有効ではないよ")
             session.invalidateAndCancel()
         }
     }
     
+    
+    func cancelTask(){
+        task?.cancel()
+    }
 
+    
+    
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        strData?.append(data)
+        self.strData?.append(data)
     }
     
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let er = error{
-            delegate?.didReceiveError(er.localizedDescription)
+            self.delegate?.didReceiveError(er.localizedDescription)
         }else{
-            delegate?.didReceiveData(strData!)
+            self.delegate?.didReceiveData(strData!)
         }
         session.invalidateAndCancel()
     }
