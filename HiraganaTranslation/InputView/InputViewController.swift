@@ -13,24 +13,27 @@ import UIKit
 class InputViewController: UIViewController, HiraganaConverterDelegate{
     
     
-    @IBOutlet var inputField:UITextView!
+    @IBOutlet var inputTextView:UITextView!
     @IBOutlet var waitingScreenView:UIView!
     @IBOutlet var indicator:UIActivityIndicatorView!
     @IBOutlet var inputViewSet:UIView!
     @IBOutlet var yConstraint:NSLayoutConstraint!
     @IBOutlet var topConstraint:NSLayoutConstraint!
+    @IBOutlet var indicatorView:UIView!
     
     var hiraganaResult:String?
     var converter:HiraganaConverter?
+
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        inputField.text = ""
-        inputField.layer.borderWidth = 1
-        inputField.layer.cornerRadius = 5
-        inputField.layer.borderColor = UIColor.lightGray.cgColor
-        inputField.becomeFirstResponder()
+
+        self.inputTextView.text = ""
+        self.inputTextView.layer.borderWidth = 1
+        self.inputTextView.layer.cornerRadius = 5
+        self.inputTextView.layer.borderColor = UIColor.lightGray.cgColor
+        self.inputTextView.becomeFirstResponder()
         
         
         //To move inputViewSet when software keyboard will be shown or hidden.
@@ -46,19 +49,19 @@ class InputViewController: UIViewController, HiraganaConverterDelegate{
 
     
     @IBAction func convert(){
-        if let str = inputField.text, str.count > 0{
-            converter = HiraganaConverter(delegate: self)
-            converter?.beginConversion(sentence: str)
+        if let str = inputTextView.text, str.count > 0{
+            self.converter = HiraganaConverter(delegate: self)
+            self.converter?.beginConversion(sentence: str)
             self.showWaitingScreen()
         }
     }
     
     @IBAction func viewWasTaped(){
-        self.inputField.resignFirstResponder()
+        self.inputTextView.resignFirstResponder()
     }
     
     @IBAction func cancelTask(){
-        converter?.cancelTask()
+        self.converter?.cancelTask()
         self.hideWaitingScreen()
     }
     
@@ -121,14 +124,20 @@ class InputViewController: UIViewController, HiraganaConverterDelegate{
         let keyboardSize = keyboardInfo.cgRectValue.size
         let keyboardOrigin = keyboardInfo.cgRectValue.origin
         
-        if (inputViewSet.frame.origin.y + inputViewSet.frame.size.height) > keyboardOrigin.y {
+        if (self.inputViewSet.frame.origin.y + self.inputViewSet.frame.size.height) > keyboardOrigin.y + 10 {
             UIView.animate(withDuration: duration, animations: {
                 self.yConstraint.isActive = false
                 self.yConstraint = self.inputViewSet.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant:(-keyboardSize.height))
                 self.yConstraint.isActive = true
-                self.topConstraint.isActive = false
-                self.topConstraint = self.inputViewSet.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant:10)
-                self.topConstraint.isActive = true
+                
+                self.view.layoutIfNeeded()
+
+                if (self.indicatorView.frame.origin.y + self.indicatorView.frame.size.height) > self.inputViewSet.frame.origin.y {
+                    self.topConstraint.isActive = false
+                    self.topConstraint = self.inputViewSet.topAnchor.constraint(equalTo: self.indicatorView.bottomAnchor)
+                    self.topConstraint.isActive = true
+                }
+                
                 self.view.layoutIfNeeded()
             })
         }

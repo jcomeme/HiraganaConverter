@@ -105,7 +105,7 @@ class VerticalResultViewController: UIViewController {
     
     
     @objc func backToInput(){
-        self.delegate?.inputField.text = ""
+        self.delegate?.inputTextView.text = ""
         self.dismiss(animated: true, completion: nil)
     }
 
