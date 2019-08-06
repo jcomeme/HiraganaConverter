@@ -11,14 +11,15 @@ import CoreText
 
 class TextModel: NSObject{
 
+    /* References:
+    https://qiita.com/woxtu/items/284369fd2654edac2248
+    */
+    
     
     var originalText = ""
     var fontSize: CGFloat = 20
     var fontName = "HiraMinProN-W3"
 
-    
-    
-    
     required init(content:String) {
         self.originalText = content
     }
@@ -27,33 +28,24 @@ class TextModel: NSObject{
     func sizeOfView(size:CGSize, attrStr:NSAttributedString) -> CGSize{
         var pageArray = [CFRange]()
         let path:CGMutablePath = CGMutablePath();
-        let bounds:CGRect = CGRect(x: 0, y: 0 , width:size.height , height:(size.width / 4))//幅と高さを
+        let bounds:CGRect = CGRect(x: 0, y: 0 , width:size.height , height:(size.width))//幅と高さを
         path.addRect(bounds)
         let framesetter :CTFramesetter = CTFramesetterCreateWithAttributedString(attrStr);
         var range = CFRangeMake(0, 0)
         var indexCounter = 0
-        var counter = 0
-        
-        var lastRange = CFRangeMake(0, 0)
-        
+
         while(true){
-            print(counter)
-            counter += 1
-            print(indexCounter)
-            
-            //let csize:CGSize = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, range, nil, size, nil)
-            
             let frame:CTFrame = CTFramesetterCreateFrame(framesetter, range, path, nil);
             let tempRange = CTFrameGetVisibleStringRange(frame)
             if tempRange.length == 0{
                 break
             }
-            lastRange = tempRange
+
             pageArray.append(tempRange)
             indexCounter += tempRange.length
             range = CFRangeMake(indexCounter, 0)
         }
-        return CGSize(width: Int(CGFloat(pageArray.count) * (size.width) / 4), height: Int(size.height))
+        return CGSize(width: Int(CGFloat(pageArray.count) * (size.width)), height: Int(size.height))
     }
     
     
@@ -120,10 +112,6 @@ class TextModel: NSObject{
         return attrstring
     }
     
-    
-    
-    
-    
 }
 
 
@@ -131,7 +119,7 @@ class TextModel: NSObject{
 
 extension String {
     var isHiragana: Bool {
-        let range = "^[、-ゞ]+$"
+        let range = "^[、-ヾ]+$"
         return NSPredicate(format: "SELF MATCHES %@", range).evaluate(with: self)
     }
     
@@ -147,30 +135,7 @@ extension String {
         
         return String(self)
     }
-    
-    func substring(_ r: CountableClosedRange<Int>) -> String {
-        
-        let from = r.lowerBound
-        let to = r.upperBound
-        
-        return self.substring(from..<(to+1))
-    }
-    
-    func substring(_ r: CountablePartialRangeFrom<Int>) -> String {
-        
-        let from = r.lowerBound
-        let to = self.count
-        
-        return self.substring(from..<to)
-    }
-    
-    func substring(_ r: PartialRangeThrough<Int>) -> String {
-        
-        let from = 0
-        let to = r.upperBound
-        
-        return self.substring(from..<to)
-    }
+
     func find(pattern: String) -> NSTextCheckingResult? {
         do {
             let re = try NSRegularExpression(pattern: pattern, options: [])

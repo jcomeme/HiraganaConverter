@@ -11,6 +11,10 @@ import UIKit
 
 //View for vertical writing.
 class TTView: UIView {
+    
+    /* References:
+     https://debuyan.wordpress.com/2017/05/15/swift3%E3%81%A7coretext%E3%81%A7%E3%81%AE%E7%B8%A6%E6%9B%B8%E3%81%8D/
+     */
 
     
     var content:NSAttributedString = NSAttributedString()

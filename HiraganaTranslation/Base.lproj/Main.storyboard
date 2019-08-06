@@ -10,10 +10,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Input View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="HiraganaTranslation" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="InputViewController" customModule="HiraganaTranslation" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -49,17 +49,29 @@
                                     <constraint firstItem="SN2-A9-V7I" firstAttribute="top" secondItem="Nql-tx-RGL" secondAttribute="bottom" constant="10" id="soa-eG-OCm"/>
                                 </constraints>
                             </view>
-                            <view hidden="YES" alpha="0.5" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lhe-kK-IuF">
+                            <view hidden="YES" alpha="0.69999999999999996" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lhe-kK-IuF">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                                 <subviews>
                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="grm-d3-sUK">
-                                        <rect key="frame" x="188.5" y="429.5" width="37" height="37"/>
+                                        <rect key="frame" x="188.5" y="389.5" width="37" height="37"/>
                                     </activityIndicatorView>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Knw-Ts-Snk">
+                                        <rect key="frame" x="146" y="467.5" width="122" height="41"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                        <state key="normal" title="キャンセル">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="cancelTask" destination="BYZ-38-t0r" eventType="touchUpInside" id="DFs-N8-sSa"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="grm-d3-sUK" firstAttribute="centerY" secondItem="lhe-kK-IuF" secondAttribute="centerY" id="3M9-3h-1hN"/>
+                                    <constraint firstItem="grm-d3-sUK" firstAttribute="centerY" secondItem="lhe-kK-IuF" secondAttribute="centerY" constant="-40" id="3M9-3h-1hN"/>
+                                    <constraint firstItem="Knw-Ts-Snk" firstAttribute="centerX" secondItem="lhe-kK-IuF" secondAttribute="centerX" id="Kt9-M3-bbe"/>
                                     <constraint firstItem="grm-d3-sUK" firstAttribute="centerX" secondItem="lhe-kK-IuF" secondAttribute="centerX" id="pkp-rl-kIX"/>
+                                    <constraint firstItem="Knw-Ts-Snk" firstAttribute="centerY" secondItem="lhe-kK-IuF" secondAttribute="centerY" constant="40" id="wvo-f9-DDo"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -84,6 +96,7 @@
                         <outlet property="indicator" destination="grm-d3-sUK" id="uTi-hw-nrZ"/>
                         <outlet property="inputField" destination="Nql-tx-RGL" id="9M5-mj-TL7"/>
                         <outlet property="inputViewSet" destination="d6V-yM-0uO" id="wHD-0u-MUr"/>
+                        <outlet property="topConstraint" destination="2BR-JE-Qat" id="SjM-Ni-Edn"/>
                         <outlet property="waitingScreenView" destination="lhe-kK-IuF" id="lqS-wc-iNV"/>
                         <outlet property="yConstraint" destination="Iim-7S-C7d" id="Zkz-W0-fL5"/>
                     </connections>

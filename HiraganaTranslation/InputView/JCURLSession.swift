@@ -22,11 +22,12 @@ class JCURLSession: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate{
     
     var delegate:JCURLSessionDelegate?
     var strData:Data?
+    var task:URLSessionDataTask?
     
     
     required init(delegate dlg:JCURLSessionDelegate){
         super.init()
-        delegate = dlg
+        self.delegate = dlg
     }
 
     func httpRequest(url:String, method:String?, payload:String?){
@@ -46,31 +47,31 @@ class JCURLSession: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate{
             let myData: Data = pl.data(using: String.Encoding(rawValue: String.Encoding.utf8.rawValue))!
             request.httpBody = myData as Data
             
-            print(request.allHTTPHeaderFields!)
-            
-            
-            let task: URLSessionDataTask = session.dataTask(with: request)
-            
-            
-            task.resume()
+            self.task = session.dataTask(with: request)
+            task?.resume()
         }else{
-            delegate?.didReceiveError("URLが有効ではないよ")
+            self.delegate?.didReceiveError("URLが有効ではないよ")
             session.invalidateAndCancel()
         }
     }
     
     
+    func cancelTask(){
+        task?.cancel()
+    }
 
+    
+    
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        strData?.append(data)
+        self.strData?.append(data)
     }
     
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         if let er = error{
-            delegate?.didReceiveError(er.localizedDescription)
+            self.delegate?.didReceiveError(er.localizedDescription)
         }else{
-            delegate?.didReceiveData(strData!)
+            self.delegate?.didReceiveData(strData!)
         }
         session.invalidateAndCancel()
     }

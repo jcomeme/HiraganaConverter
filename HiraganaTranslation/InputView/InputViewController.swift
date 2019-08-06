@@ -10,7 +10,7 @@ import UIKit
 
 
 
-class ViewController: UIViewController, HiraganaConverterDelegate{
+class InputViewController: UIViewController, HiraganaConverterDelegate{
     
     
     @IBOutlet var inputField:UITextView!
@@ -18,10 +18,11 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     @IBOutlet var indicator:UIActivityIndicatorView!
     @IBOutlet var inputViewSet:UIView!
     @IBOutlet var yConstraint:NSLayoutConstraint!
+    @IBOutlet var topConstraint:NSLayoutConstraint!
     
-    var originalSentence:String?
     var hiraganaResult:String?
-
+    var converter:HiraganaConverter?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,9 +47,8 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     
     @IBAction func convert(){
         if let str = inputField.text, str.count > 0{
-            self.originalSentence = str
-            let converter = HiraganaConverter(delegate: self)
-            converter.beginConversion(sentence: str)
+            converter = HiraganaConverter(delegate: self)
+            converter?.beginConversion(sentence: str)
             self.showWaitingScreen()
         }
     }
@@ -57,12 +57,18 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
         self.inputField.resignFirstResponder()
     }
     
+    @IBAction func cancelTask(){
+        converter?.cancelTask()
+        self.hideWaitingScreen()
+    }
     
     func showWaitingScreen(){
+        
         self.indicator.startAnimating()
         UIView.animate(withDuration: 3, animations: {
             self.waitingScreenView.isHidden = false
         })
+ 
     }
     
     func hideWaitingScreen(){
@@ -75,14 +81,14 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
     
     //HiraganaConverterDelegate method
     func didConvert(_ string: String) {
-
-        self.hiraganaResult = string
-        self.hideWaitingScreen()
+        
         //self.performSegue(withIdentifier: "showResultSegue", sender: self)
         let vert = VerticalResultViewController()
         vert.delegate = self
-        vert.originalSentence = self.hiraganaResult
-        self.present(vert, animated: true, completion: nil)
+        vert.convertedSentence = string
+        self.present(vert, animated: true, completion: {
+            self.hideWaitingScreen()
+        })
     }
     
     
@@ -120,10 +126,14 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
                 self.yConstraint.isActive = false
                 self.yConstraint = self.inputViewSet.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant:(-keyboardSize.height))
                 self.yConstraint.isActive = true
+                self.topConstraint.isActive = false
+                self.topConstraint = self.inputViewSet.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant:10)
+                self.topConstraint.isActive = true
                 self.view.layoutIfNeeded()
             })
         }
     }
+    
     
     // Move inputViewSet to self.view.centerY when keyboard will be hidden.
     @objc func keyboardWillHide(_ notification:Notification){
@@ -137,8 +147,13 @@ class ViewController: UIViewController, HiraganaConverterDelegate{
             self.yConstraint.isActive = false
             self.yConstraint = self.inputViewSet.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
             self.yConstraint.isActive = true
+            self.topConstraint.isActive = false
+            self.topConstraint = self.inputViewSet.heightAnchor.constraint(equalToConstant: 240)
+            self.topConstraint.isActive = true
             self.view.layoutIfNeeded()
         })
     }
+    
+    
 }
 
